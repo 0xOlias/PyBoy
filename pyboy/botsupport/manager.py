@@ -7,6 +7,7 @@ from . import screen as _screen
 from . import sprite as _sprite
 from . import tile as _tile
 from . import tilemap as _tilemap
+from . import sound as _sound
 
 try:
     from cython import compiled
@@ -39,6 +40,17 @@ class BotSupportManager:
             A Screen object with helper functions for reading the screen buffer.
         """
         return _screen.Screen(self.mb)
+
+    def sound(self):
+        """
+        Use this method to get a `pyboy.botsupport.sound.Sound` object. This can be used to get the raw audio buffer.
+
+        Returns
+        -------
+        `pyboy.botsupport.sound.Sound`:
+            A Sound object.
+        """
+        return _sound.Sound(self.mb)
 
     def sprite(self, sprite_index):
         """

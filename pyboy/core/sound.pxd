@@ -29,6 +29,7 @@ cdef class Sound:
     # cdef uint8_t[4096] audiobuffer
     cdef object audiobuffer
     cdef object audiobuffer_p
+    cdef object audioqueue
 
     cdef int clock
 
