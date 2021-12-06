@@ -9,6 +9,7 @@
 
 from array import array
 from ctypes import c_void_p
+from queue import SimpleQueue
 
 import sdl2
 
@@ -30,7 +31,7 @@ class Sound:
         self.sampleclocks = CPU_FREQ / self.sample_rate
         self.audiobuffer = array("b", [0] * 4096)  # Over 2 frames
         self.audiobuffer_p = c_void_p(self.audiobuffer.buffer_info()[0])
-        self.audioqueue = []
+        self.audioqueue = SimpleQueue()
 
         self.clock = 0
 
@@ -155,7 +156,7 @@ class Sound:
         if queued_time > samples_per_frame * SOUND_DESYNC_THRESHOLD:
             sdl2.SDL_ClearQueuedAudio(self.device)
 
-        self.audioqueue.append(self.audiobuffer[:nsamples])
+        self.audioqueue.put(self.audiobuffer[:2 * nsamples])
         sdl2.SDL_QueueAudio(self.device, self.audiobuffer_p, 2 * nsamples)
         self.clock %= self.sampleclocks
 

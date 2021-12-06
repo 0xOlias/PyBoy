@@ -12,6 +12,6 @@ class Sound:
         self.mb = mb
 
     def raw_sound_queue_pop(self):
-        if len(self.mb.sound.audioqueue):
-            return self.mb.sound.audioqueue.pop()
+        if not self.mb.sound.audioqueue.empty():
+            return self.mb.sound.audioqueue.get_nowait()
         return None
