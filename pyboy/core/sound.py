@@ -27,7 +27,7 @@ class Sound:
         # spec_have = sdl2.SDL_AudioSpec(0, 0, 0, 0)
         # self.device = sdl2.SDL_OpenAudioDevice(None, 0, spec_want, spec_have, 0)
 
-        self.sample_rate = 44100
+        self.sample_rate = 32768
         self.sampleclocks = CPU_FREQ / self.sample_rate
         self.audiobuffer = array("b", [0] * 4096)  # Over 2 frames
         # self.audiobuffer_p = c_void_p(self.audiobuffer.buffer_info()[0])
