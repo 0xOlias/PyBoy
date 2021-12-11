@@ -9,9 +9,9 @@
 
 from array import array
 from ctypes import c_void_p
-from queue import SimpleQueue
+from queue import Queue
 
-import sdl2
+# import sdl2
 
 SOUND_DESYNC_THRESHOLD = 5
 CPU_FREQ = 4213440  # hz
@@ -20,18 +20,18 @@ CPU_FREQ = 4213440  # hz
 class Sound:
     def __init__(self):
         # Initialization is handled in the windows, otherwise we'd need this
-        sdl2.SDL_Init(sdl2.SDL_INIT_AUDIO)
+        # sdl2.SDL_Init(sdl2.SDL_INIT_AUDIO)
 
         # Open audio device
-        spec_want = sdl2.SDL_AudioSpec(32768, sdl2.AUDIO_S8, 2, 64)
-        spec_have = sdl2.SDL_AudioSpec(0, 0, 0, 0)
-        self.device = sdl2.SDL_OpenAudioDevice(None, 0, spec_want, spec_have, 0)
+        # spec_want = sdl2.SDL_AudioSpec(32768, sdl2.AUDIO_S8, 2, 64)
+        # spec_have = sdl2.SDL_AudioSpec(0, 0, 0, 0)
+        # self.device = sdl2.SDL_OpenAudioDevice(None, 0, spec_want, spec_have, 0)
 
-        self.sample_rate = spec_have.freq
+        self.sample_rate = 44100
         self.sampleclocks = CPU_FREQ / self.sample_rate
         self.audiobuffer = array("b", [0] * 4096)  # Over 2 frames
-        self.audiobuffer_p = c_void_p(self.audiobuffer.buffer_info()[0])
-        self.audioqueue = SimpleQueue()
+        # self.audiobuffer_p = c_void_p(self.audiobuffer.buffer_info()[0])
+        self.audioqueue = Queue()
 
         self.clock = 0
 
@@ -51,8 +51,8 @@ class Sound:
         self.righttone = False
         self.rightsweep = False
 
-        # Start playback (move out of __init__ if needed, maybe for headless)
-        sdl2.SDL_PauseAudioDevice(self.device, 0)
+        # # Start playback (move out of __init__ if needed, maybe for headless)
+        # sdl2.SDL_PauseAudioDevice(self.device, 0)
 
     def get(self, offset):
         self.sync()
@@ -151,17 +151,19 @@ class Sound:
                 self.audiobuffer[2*i + 1] = 0
 
         # Clear queue, if we are behind
-        queued_time = sdl2.SDL_GetQueuedAudioSize(self.device)
-        samples_per_frame = (self.sample_rate / 60) * 2  # Data of 1 frame's worth (60) in stereo (2)
-        if queued_time > samples_per_frame * SOUND_DESYNC_THRESHOLD:
-            sdl2.SDL_ClearQueuedAudio(self.device)
+        # queued_time = sdl2.SDL_GetQueuedAudioSize(self.device)
+        # samples_per_frame = (self.sample_rate / 60) * 2  # Data of 1 frame's worth (60) in stereo (2)
+        # if queued_time > samples_per_frame * SOUND_DESYNC_THRESHOLD:
+        #     sdl2.SDL_ClearQueuedAudio(self.device)
 
         self.audioqueue.put(self.audiobuffer[:2 * nsamples])
-        sdl2.SDL_QueueAudio(self.device, self.audiobuffer_p, 2 * nsamples)
+
+        # sdl2.SDL_QueueAudio(self.device, self.audiobuffer_p, 2 * nsamples)
         self.clock %= self.sampleclocks
 
     def stop(self):
-        sdl2.SDL_CloseAudioDevice(self.device)
+        # sdl2.SDL_CloseAudioDevice(self.device)
+        pass
 
     def save_state(self, file):
         pass
